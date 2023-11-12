@@ -22,6 +22,19 @@ class TestBaseModel(unittest.TestCase):
         self.assertTrue(hasattr(self.model, 'created_at'))
         self.assertTrue(hasattr(self.model, 'updated_at'))
 
+    def test_init_with_kwargs(self):
+        kwargs = {
+            'id': 'test_id',
+            'created_at': '2023-01-01T12:00:00.000000',
+            'updated_at': '2023-01-01T12:30:00.000000',
+        }
+        model = BaseModel(**kwargs)
+        self.assertEqual(model.id, 'test_id')
+        self.assertEqual(model.created_at, datetime(2023, 1, 1, 12, 0, 0))
+        self.assertEqual(model.updated_at, datetime(2023, 1, 1, 12, 30, 0))
+        self.assertEqual(model.custom_attr, 'custom_value')
+
+
     def test_str(self):
         """Test the __str__ method"""
         expected_str = "[{}] ({}) {}".format(
