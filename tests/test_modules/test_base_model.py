@@ -38,9 +38,14 @@ class TestBaseModel(unittest.TestCase):
         """Test the to_dict method"""
         model_dict = self.model.to_dict()
         self.assertIsInstance(model_dict, dict)
-        self.assertEqual(model_dict['__class__'], self.model.__class__.__name__)
-        self.assertEqual(model_dict['created_at'], self.model.created_at.isoformat())
-        self.assertEqual(model_dict['updated_at'], self.model.updated_at.isoformat())
+        self.assertEqual(model_dict['__class__'],
+                         self.model.__class__.__name__)
+        self.assertEqual(
+            model_dict['created_at'],
+            self.model.created_at.isoformat())
+        self.assertEqual(
+            model_dict['updated_at'],
+            self.model.updated_at.isoformat())
 
 
 if __name__ == '__main__':
