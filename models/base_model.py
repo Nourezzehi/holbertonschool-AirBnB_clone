@@ -15,8 +15,10 @@ class BaseModel:
         if kwargs:
             for key, value in kwargs.items():
                 if key in ("created_at", "updated_at"):
-                    value = datetime.strptime(kwargs['updated_at']
+                    value = datetime.strptime(kwargs['updated_at'],
                                               '%Y-%m-%dT%H:%M:%S.%f')
+                if "__class__" not in key:
+                    setattr(self, key, value)
 
     def __str__(self):
         """String representation of the object"""
