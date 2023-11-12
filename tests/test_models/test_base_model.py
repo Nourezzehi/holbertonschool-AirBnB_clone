@@ -6,6 +6,7 @@ import unittest
 from datetime import datetime
 
 
+
 class TestBaseModel(unittest.TestCase):
     def setUp(self):
         """Create an instance of BAseModel for testing"""
