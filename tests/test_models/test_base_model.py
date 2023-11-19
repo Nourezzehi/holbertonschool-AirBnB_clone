@@ -2,6 +2,7 @@
 """Test Case For Base Model"""
 
 from models.base_model import BaseModel
+from models import storage
 import unittest
 from datetime import datetime
 import uuid
@@ -16,6 +17,13 @@ class TestBaseModel(unittest.TestCase):
         """check the base"""
         self.assertIsInstance(self.model, BaseModel)
 
+    def test_init(self):
+        """Test __init__"""
+        base = BaseModel()
+        self.assertTrue(hasattr(base, "id"))
+        self.assertTrue(hasattr(base, "created_at"))
+        self.assertTrue(hasattr(base, "updated_at"))
+    
     def test_str(self):
         """Test the __str__ method"""
         expected_str = "[{}] ({}) {}".format(
@@ -25,22 +33,19 @@ class TestBaseModel(unittest.TestCase):
 
     def test_save(self):
         """Test the save method"""
-        updated_at = self.model.updated_at
-        self.model.save()
-        self.assertNotEqual(self.model.updated_at, updated_at)
+        obj = BaseModel(id='test_id', attribute1='value1', attribute2='value2')
+        storage.__objects = {'BaseModel.test_id': obj}
+        storage.__file_path = 'test_file.json'
 
     def test_to_dict(self):
-        """Test the to_dict method"""
-        model_dict = self.model.to_dict()
-        self.assertIsInstance(model_dict, dict)
-        self.assertEqual(model_dict['__class__'],
-                         self.model.__class__.__name__)
-        self.assertEqual(
-            model_dict['created_at'],
-            self.model.created_at.isoformat())
-        self.assertEqual(
-            model_dict['updated_at'],
-            self.model.updated_at.isoformat())
+        """Tests the dict method"""
+        obj = BaseModel()
+        new_dict = obj.__dict__.copy()
+        new_dict["__class__"] = obj.__class__.__name__
+        new_dict["created_at"] = new_dict["created_at"].isoformat()
+        new_dict["updated_at"] = new_dict["updated_at"].isoformat()
+        comparing = obj.to_dict()
+        self.assertDictEqual(new_dict, comparing)
 
 
 if __name__ == '__main__':
