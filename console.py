@@ -5,10 +5,15 @@ from models.engine.file_storage import FileStorage
 from models import storage
 import cmd
 
+def parse(arg):
+    """Convert a series arguments to an argument list"""
+    return list(map(str, arg.split()))
+
 
 class HBNBCommand(cmd.Cmd):
     """class HBNB for command line"""
     prompt = "(hbnb) "
+    allowed_classes = ['BaseModel', 'User']
 
     def do_quit(self, arg):
         """quit command to exit console"""
@@ -22,18 +27,15 @@ class HBNBCommand(cmd.Cmd):
         """nothing to execute"""
         pass
 
-    def help_quit(self):
-        """help quit command"""
-        print("Quit command to exit the program\n")
-
     def do_create(self, arg=None):
         """Create an instance of BaseModel"""
-        if not arg or arg != "BaseModel":
+        if not arg:
             print("** class name missing **")
+        elif arg not in HBNBCommand.allowed_classes:
+            print("** class doesn't exist **")
         else:
-            new_instance = BaseModel()
-            new_instance.save()
-            print(new_instance.id)
+            print(eval(arg)().id)
+            storage.save()
 
     def do_show(self, arg):
         """show instance based on class name and ID"""
@@ -41,7 +43,7 @@ class HBNBCommand(cmd.Cmd):
         obj_dict = storage.all()
         if len(arg_list) == 0:
             print("** class name missing **")
-        elif arg_list[0] != "BaseModel":
+        elif arg_list[0] not in HBNBCommand.allowed_classes:
             print("** class doesn't exist **")
         elif len(arg_list) < 2:
             print("** instance id missing **")
@@ -56,7 +58,7 @@ class HBNBCommand(cmd.Cmd):
         obj_dict = storage.all()
         if len(arg_list) == 0:
             print("** class name missing **")
-        elif arg_list[0] != "BaseModel":
+        elif arg_list[0] not in HBNBCommand.allowed_classes:
             print("** class doesn't exist **")
         elif len(arg_list) < 2:
             print("** instance id missing **")
@@ -69,7 +71,7 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, arg):
         """Display all instances based on class name"""
         arg_list = parse(arg)
-        if len(arg_list) > 0 and arg_list[0] != "BaseModel":
+        if len(arg_list) > 0 and arg_list[0] not in HBNBCommand.allowed_classes:
             print("** class doesn't exist **")
         else:
             all_objs = storage.all()
@@ -78,12 +80,12 @@ class HBNBCommand(cmd.Cmd):
                 print(obj)
 
     def do_update(self, arg):
-        """update an instance attribute"""
+        """instance's attribute updated"""
         arg_list = parse(arg)
         obj_dict = storage.all()
         if len(arg_list) == 0:
             print("** class name missing **")
-        elif arg_list[0] != "BaseModel":
+        elif arg_list[0] not in HBNBCommand.allowed_classes:
             print("** class doesn't exist **")
         elif len(arg_list) < 2:
             print("** instance id missing **")
@@ -100,9 +102,7 @@ class HBNBCommand(cmd.Cmd):
             storage.save()
 
 
-def parse(arg):
-    """Convert a series arguments to an argument list"""
-    return list(map(str, arg.split()))
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()

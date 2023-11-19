@@ -3,6 +3,7 @@
 
 import json
 from models.base_model import BaseModel
+from models.user import User
 
 class FileStorage:
     """serializes instances to a JSON file and deserializes JSON
@@ -26,14 +27,15 @@ class FileStorage:
         with open(FileStorage.__file_path, 'w') as f:
             json.dump(temp, f)
 
-
     def reload(self):
         """Deserializes the JSON file to __objects"""
         try:
             temp = {}
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
-                for value in temp.values():
-                    self.new(BaseModel(**value))
+                for key, value in temp.items():
+                    class_name = value['__class__']
+                    del value['__class__']
+                    self.new(eval(class_name)(**value))
         except FileNotFoundError:
             pass
