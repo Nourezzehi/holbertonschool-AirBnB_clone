@@ -22,13 +22,10 @@ class FileStorage:
 
     def save(self):
         """Saves storage dictionary to file"""
-
-        temp = {}
-        temp = FileStorage.__objects.copy()
-        for key, val in temp.items():
-            temp[key] = val.to_dict()
+        temp = {key: val.to_dict() for key, val in FileStorage.__objects.items()}
         with open(FileStorage.__file_path, 'w') as f:
             json.dump(temp, f)
+
 
     def reload(self):
         """Deserializes the JSON file to __objects"""
