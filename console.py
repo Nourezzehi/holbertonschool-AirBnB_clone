@@ -3,17 +3,19 @@
 from models.base_model import BaseModel
 from models.engine.file_storage import FileStorage
 from models import storage
+from models.user import User
+from models.place import Place
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.review import Review
 import cmd
-
-def parse(arg):
-    """Convert a series arguments to an argument list"""
-    return list(map(str, arg.split()))
 
 
 class HBNBCommand(cmd.Cmd):
     """class HBNB for command line"""
     prompt = "(hbnb) "
-    allowed_classes = ['BaseModel', 'User']
+    allowed_classes = ['BaseModel', 'User', 'Place', 'State', 'City', 'Amenity', 'Review']
 
     def do_quit(self, arg):
         """quit command to exit console"""
@@ -28,7 +30,7 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, arg=None):
-        """Create an instance of BaseModel"""
+        """Create an instance of a class"""
         if not arg:
             print("** class name missing **")
         elif arg not in HBNBCommand.allowed_classes:
@@ -102,6 +104,9 @@ class HBNBCommand(cmd.Cmd):
             storage.save()
 
 
+def parse(arg):
+    """Convert a series arguments to an argument list"""
+    return list(map(str, arg.split()))
 
 
 if __name__ == '__main__':
