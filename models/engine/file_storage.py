@@ -36,7 +36,7 @@ class FileStorage:
             temp = {}
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
-                for key, value in temp.items():
-                    FileStorage.new(BaseModel(**value))
+                for value in temp.values():
+                    self.new(BaseModel(**value))
         except FileNotFoundError:
             pass
