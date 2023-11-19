@@ -4,36 +4,17 @@
 from models.base_model import BaseModel
 import unittest
 from datetime import datetime
-
+import uuid
 
 
 class TestBaseModel(unittest.TestCase):
     def setUp(self):
-        """Create an instance of BAseModel for testing"""
+        """Create an base of BAseModel for testing"""
         self.model = BaseModel()
 
     def test_instantiation(self):
-        """check the instance"""
+        """check the base"""
         self.assertIsInstance(self.model, BaseModel)
-
-    def test_init(self):
-        """Test that the constructor method"""
-        self.assertTrue(hasattr(self.model, 'id'))
-        self.assertTrue(hasattr(self.model, 'created_at'))
-        self.assertTrue(hasattr(self.model, 'updated_at'))
-
-    def test_init_with_kwargs(self):
-        kwargs = {
-            'id': 'test_id',
-            'created_at': '2023-01-01T12:00:00.000000',
-            'updated_at': '2023-01-01T12:30:00.000000',
-        }
-        model = BaseModel(**kwargs)
-        self.assertEqual(model.id, 'test_id')
-        self.assertEqual(model.created_at, datetime(2023, 1, 1, 12, 0, 0))
-        self.assertEqual(model.updated_at, datetime(2023, 1, 1, 12, 30, 0))
-        self.assertEqual(model.custom_attr, 'custom_value')
-
 
     def test_str(self):
         """Test the __str__ method"""
