@@ -10,9 +10,11 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 
+
 class FileStorage:
     """serializes instances to a JSON file and deserializes JSON
     file to instances"""
+
     __file_path = "file.json"
     __objects = dict()
 
@@ -28,19 +30,21 @@ class FileStorage:
 
     def save(self):
         """Saves storage dictionary to file"""
-        temp = {key: val.to_dict() for key, val in FileStorage.__objects.items()}
+        temp = {key: val.to_dict()
+                for key, val in FileStorage.__objects.items()}
         with open(FileStorage.__file_path, 'w') as f:
             json.dump(temp, f)
 
     def reload(self):
         """Deserializes the JSON file to __objects"""
         try:
-            temp = {}
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
                 for key, value in temp.items():
-                    class_name = value['__class__']
-                    del value['__class__']
-                    self.new(eval(class_name)(**value))
+                    class_name = value.get('__class__')
+                    if class_name:
+                        del value['__class__']
+                        obj = eval(class_name)(**value)
+                        self.new(obj)
         except FileNotFoundError:
             pass
