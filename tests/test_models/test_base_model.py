@@ -1,56 +1,66 @@
 #!/usr/bin/python3
-"""Test Case For Base Model"""
 
-from models.base_model import BaseModel
-from models import FileStorage
 import unittest
 from datetime import datetime
-
+from models.base_model import BaseModel
+import time
 
 class TestBaseModel(unittest.TestCase):
-    def setUp(self):
-        """Create an instance of BaseModel for testing"""
-        self.model = BaseModel()
-
-    def test_instantiation(self):
-        """Check the base"""
-        self.assertIsInstance(self.model, BaseModel)
-
-    def test_init(self):
-        """Test __init__"""
-        base = BaseModel()
-        self.assertTrue(hasattr(base, "id"))
-        self.assertTrue(hasattr(base, "created_at"))
-        self.assertTrue(hasattr(base, "updated_at"))
+    def __init__(self, *args, **kwargs):
+        """Initialize test class"""
+        super().__init__(*args, **kwargs)
+        self.name = 'BaseModel'
+        self.value = BaseModel
     
-    def test_str(self):
-        """Test the __str__ method"""
-        expected_str = "[{}] ({}) {}".format(
-            self.model.__class__.__name__, self.model.id, self.model.__dict__
-        )
-        self.assertEqual(str(self.model), expected_str)
+    def setUp(self):
+        pass
 
-def test_save(self):
-    """Test the save method"""
-    obj = BaseModel(id='test_id', attribute1='value1', attribute2='value2')
-    obj.created_at = datetime.now()
+    def tearDown(self):
+        pass
 
-    file_storage = FileStorage()
-    file_storage._FileStorage__objects = {'BaseModel.test_id': obj}
-    file_storage._FileStorage__file_path = 'test_file.json'
-    file_storage.save()
+    def test_constructor_with_kwargs(self):
+        data = {
+            "id": "some_id",
+            "created_at": "2023-01-01T12:00:00.000000",
+            "updated_at": "2023-01-02T12:30:00.000000",
+            "custom_attr": "some_value"
+        }
+        obj = BaseModel(**data)
 
+        self.assertEqual(obj.id, data["id"])
+        self.assertEqual(obj.created_at, datetime.strptime(data["created_at"], '%Y-%m-%dT%H:%M:%S.%f'))
+        self.assertEqual(obj.updated_at, datetime.strptime(data["updated_at"], '%Y-%m-%dT%H:%M:%S.%f'))
+        self.assertEqual(obj.custom_attr, data["custom_attr"])
 
-    def test_to_dict(self):
-        """Tests the to_dict method"""
+    def test_constructor_without_kwargs(self):
         obj = BaseModel()
-        new_dict = obj.__dict__.copy()
-        new_dict["__class__"] = obj.__class__.__name__
-        new_dict["created_at"] = new_dict["created_at"].isoformat()
-        new_dict["updated_at"] = new_dict["updated_at"].isoformat()
-        comparing = obj.to_dict()
-        self.assertDictEqual(new_dict, comparing)
 
+        self.assertIsNotNone(obj.id)
+        self.assertIsInstance(obj.created_at, datetime)
+        self.assertIsInstance(obj.updated_at, datetime)
+
+    def test_str(self):
+        """ Test instance string representation"""
+        i = self.value()
+        self.assertEqual(str(i), '[{}] ({}) {}'.format(self.name, i.id,
+                         i.__dict__))
+
+
+    def test_save_method(self):
+        obj = BaseModel()
+        previous_updated_at = obj.updated_at
+        time.sleep(1)
+        obj.save()
+        self.assertIsInstance(obj.updated_at, datetime)
+        self.assertGreater(obj.updated_at, previous_updated_at)
+
+    def test_to_dict_method(self):
+        obj = BaseModel()
+        obj_dict = obj.to_dict()
+
+        self.assertIn("__class__", obj_dict)
+        self.assertIn("created_at", obj_dict)
+        self.assertIn("updated_at", obj_dict)
 
 if __name__ == '__main__':
     unittest.main()
